@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8" />
+	<title>图片预加载之有序加载</title>
+	<style>
+		html,body {
+			height: 100%;
+		}
+		.box {
+			text-align:  center;
+		}
+		.box img {
+			width: 1200px;
+			height: 850px;
+		}
+		a {
+			text-decoration: none;
+		}
+		.btn {
+			display: inline-block;
+			height: 30px;
+			line-height: 30px;
+			border: 1px solid #ccc;
+			background-color: #fff;
+			padding: 0 10px;
+			margin-right: 5px;
+			color: #333;
+		}
+		.btn:hover {
+			background: #eee;
+		}
+	</style>
+</head>
+<body>
+	<div class="box">
+	<img src="./images/B01.jpg" alt="pic" id="img" />
+	<p>
+		<a href="javascript:;" class="btn" data-control="prev">上一页</a>
+		<a href="javascript:;" class="btn" data-control="next">下一页</a>
+	</p>
+</div>
+
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="js/preload.js"></script>
+<script>
+	var imgs = [
+	    './images/B01.jpg',
+	    './images/B03.jpg',
+	    './images/B02.jpg',
+	    './images/B04.jpg',
+	    './images/B05.jpg',
+	    './images/B06.jpg',
+	    './images/B07.jpg',
+	    './images/B08.jpg',
+	    './images/B09.jpg',
+	    './images/B10.jpg',
+	    './images/B11.jpg'];
+
+    var len = imgs.length,
+    	count = 0,
+    	index = 0; // 表示当前浏览到了第几张图片
+
+/*    load();
+
+	// 有序预加载
+	function load() {
+		var imgObj = new Image();
+		$(imgObj).on('load error', function() {
+			if (count >= len) {
+				// 所有图片已经加载完毕
+			} else {
+				// 还有图片未加载完
+				load();
+			}
+			count++;
+		});
+
+		imgObj.src = imgs[count];
+	}*/
+
+	$.preload(imgs, {
+		order: 'ordered'
+	})
+
+	$('.btn').on('click', function () {
+		if ('prev' === $(this).data('control')) { // 上一张
+			index = Math.max(0, --index);
+		} else { // 下一张
+			index = Math.min(len-1, ++index);
+		}
+		document.title = (index + 1) + ' / ' + len;
+		$('#img').attr('src', imgs[index]);
+	});
+</script>
+</body>
+</html>

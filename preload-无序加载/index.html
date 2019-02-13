@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8" />
+	<title>图片预加载之无序加载</title>
+	<style>
+		html,body {
+			height: 100%;
+		}
+		.box {
+			text-align:  center;
+		}
+		.box img {
+			width: 1200px;
+			height: 850px;
+		}
+		a {
+			text-decoration: none;
+		}
+		.btn {
+			display: inline-block;
+			height: 30px;
+			line-height: 30px;
+			border: 1px solid #ccc;
+			background-color: #fff;
+			padding: 0 10px;
+			margin-right: 5px;
+			color: #333;
+		}
+		.btn:hover {
+			background: #eee;
+		}
+		.loading {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: #eee;
+			text-align: center;
+			font-size: 30px;
+		}
+		.loading .progress {
+			margin-top: 200px;
+		}
+	</style>
+</head>
+<body>
+<div class="box">
+	<img src="http://i2.hoopchina.com.cn/user/308/15960308/13383588090.jpg" alt="pic" id="img" />
+	<p>
+		<a href="javascript:;" class="btn" data-control="prev">上一页</a>
+		<a href="javascript:;" class="btn" data-control="next">下一页</a>
+	</p>
+</div>
+<div class="loading">
+	<p class="progress">0%</p>
+</div>
+
+
+<script src="bower_components/jquery/dist/jquery.min.js"></script>
+<script src="./js/preload.js"></script>
+<script	>
+	var imgs = [
+	    'http://i2.hoopchina.com.cn/user/308/15960308/13383588090.jpg',
+	    'https://dimg15.c-ctrip.com/images/300e0k000000bj8ko077D.jpg',
+	    'http://img.article.pchome.net/00/44/23/20/pic_lib/wm/2.jpg',
+	    'http://lcd.yesky.com/imagelist/2009/044/404q4y8g4m0p.jpg',
+	    'https://dimg15.c-ctrip.com/images/30030k000000ba7aaB517.jpg',
+	    'http://lcd.yesky.com/imagelist/2009/044/cgro54wt2t2x.jpg',
+	    ];
+
+    var index = 0,
+    	len = imgs.length,
+    	$progress = $('.progress');
+
+
+	// 使用自定义的jQuery插件
+	$.preload(imgs, {
+		each: function(count) {
+			// 修改进度条的进度
+			$progress.html(Math.round((count+1) / len * 100) + '%');
+		},
+		all: function() {
+			$('.loading').hide();
+			document.title = '1/' + len;
+		}
+	})
+
+	$('.btn').on('click', function () {
+		if ('prev' === $(this).data('control')) { // 上一张
+			index = Math.max(0, --index);
+		} else { // 下一张
+			index = Math.min(len-1, ++index);
+		}
+		document.title = (index + 1) + ' / ' + len;
+		$('#img').attr('src', imgs[index]);
+	});
+</script>
+</body>
+</html>
